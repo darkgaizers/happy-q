@@ -45,13 +45,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));  
 
-export default function RecipeReviewCard() {
+export default function RestaurantGrid(props) {
+    const {serviceID,currentQueue,estimatedWaitingTime,addToQueueAction,advanceQueueAction} = props
     const classes = useStyles();
-    const [expanded, setExpanded] = React.useState(false);
+/*     const [expanded, setExpanded] = React.useState(false);
 
     function handleExpandClick() {
         setExpanded(!expanded);
-    }
+    } */
 
     return (
         <Card className={classes.card}>
@@ -71,10 +72,19 @@ export default function RecipeReviewCard() {
             <CardContent>
                 <Grid container spacing={3} alignItems="center">
                     <Grid item sm={6} >
-                        <Button variant="outlined">Queue</Button>
+                    <QueueDisplayText currentQueue={currentQueue}/>
+                    </Grid>
+                    <Grid item sm={6} >
+                    <Button variant="outlined" onClick={()=>{
+                        addToQueueAction(serviceID)
+                    }}>Queue Now</Button>
+                    </Grid>
+                    <Grid item sm={12}>
+                        <QueueEstimatedText estimatedWaitingTime={estimatedWaitingTime}/>
+                        
                     </Grid>
                     <Grid item sm={6}>
-                    <Button variant="outlined">Book</Button>
+                    
                     </Grid>
 
                 </Grid>
@@ -87,7 +97,13 @@ export default function RecipeReviewCard() {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                <IconButton
+                <IconButton>
+
+                </IconButton>
+                <Button variant="outlined" onClick={()=>{
+                        advanceQueueAction(serviceID)
+                    }}>Queue Advance</Button>
+{/*                 <IconButton
                     className={clsx(classes.expand, {
                         [classes.expandOpen]: expanded,
                     })}
@@ -96,9 +112,9 @@ export default function RecipeReviewCard() {
                     aria-label="show more"
                 >
                     <ExpandMoreIcon />
-                </IconButton>
+                </IconButton> */}
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+{/*             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                     <Typography paragraph>Method:</Typography>
                     <Typography paragraph>
@@ -124,7 +140,49 @@ export default function RecipeReviewCard() {
                         Set aside off of the heat to let rest for 10 minutes, and then serve.
           </Typography>
                 </CardContent>
-            </Collapse>
+            </Collapse> */}
         </Card>
     );
+}
+
+function QueueDisplayText(props){
+    return (
+        <Typography variant="h2" gutterBottom style={{color:calcQueueIntensity(props.currentQueue)}}>{props.currentQueue}</Typography>
+    )
+}
+function QueueEstimatedText(props){
+    return (
+        <Typography variant="subtitle1" gutterBottom color={calcEstimatedText(props.estimatedWaitingTime)}>Estimated Waiting Time : {props.estimatedWaitingTime} Min(s)</Typography>
+    )
+}
+
+function calcQueueIntensity(qStr){
+    
+    var q = qStr*1
+    console.log(q)
+    if (qStr === "99+")
+        return "error"
+    if(q< 5)
+        return "#339933"
+    if(q < 15)
+        return "textSecondary"
+    if(q > 15)
+        return "error"
+/*     switch(q){
+        case q*1 <5 : return "textPrimary";
+        case q*1 <15 : return "textSecondary";
+        case q*1 >15 : return "error";
+        default : return "inherit";
+    } */
+}
+function calcEstimatedText(t){
+    
+    var t = t*1
+    console.log(t)
+    if(t< 5)
+        return "#33FF33"
+    if(t < 30)
+        return "textSecondary"
+    if(t > 15)
+        return "error"
 }
